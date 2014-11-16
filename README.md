@@ -4,6 +4,8 @@
 ---
 [ ![Codeship Status for ClaudivanFilho/PlayTestes](https://www.codeship.io/projects/62221cd0-f8c3-0131-6ba1-42ecadc609ef/status)](https://www.codeship.io/projects/28753)
 
+(Esse exemplo foi na grande maior parte feito por Marcos Vinícius Candeia e Claudivan Filho)
+
 >Sua aplicação Play pode ser testada em três níveis:
 
   - UNIDADE
