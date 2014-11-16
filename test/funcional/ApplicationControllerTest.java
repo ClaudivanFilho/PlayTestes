@@ -16,7 +16,6 @@ import javax.persistence.EntityManager;
 
 import models.Livro;
 import models.dao.GenericDAO;
-import models.dao.GenericDAOImpl;
 
 import org.junit.Test;
 
@@ -70,9 +69,10 @@ public class ApplicationControllerTest extends AbstractTest {
 
 		// testa se realmente adicionou o livro com nome "Calculo I" no banco de
 		// dados.
-		GenericDAO dao = new GenericDAOImpl();
-		List<Livro> livros = dao.findAllByClassName("Livro");
+        GenericDAO dao = new GenericDAO();
+		List<Livro> livros = dao.findAllByClass(Livro.class);
 		assertThat(livros.size()).isEqualTo(1);
+        assertThat(livros.get(0).getNome()).isEqualTo("Calculo I");
 		List<Livro> result2 = dao.findByAttributeName("Livro", 
 				"nome", "Calculo I");	
 		assertThat(result2.size()).isEqualTo(1);

@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -17,18 +18,15 @@ import javax.persistence.SequenceGenerator;
 import com.google.common.base.Objects;
 
 // Entidade que representa uma Tabela no Banco de Dados
-// Sempre por o nome na Entidade, pois é esse nome que se vai usar nas pesquisas do Banco de Dados
-@Entity(name = "Autor")
+@Entity
 public class Autor {
 
 	// Gerador de Sequencia para o Id
 	@Id
-	@SequenceGenerator(name = "AUTOR_SEQUENCE", sequenceName = "AUTOR_SEQUENCE", allocationSize = 1, initialValue = 0)
-	@GeneratedValue(strategy = GenerationType.TABLE)
+	@GeneratedValue
 	private Long id;
 
 	// Nome do Autor dos Livros
-	@Column
 	private String nome;
 
 	// Relação Muitos para Muitos
@@ -41,24 +39,17 @@ public class Autor {
 		this.livros = new ArrayList<Livro>();
 	}
 
-	public Autor(Livro... livros) {
-		this.livros = Arrays.asList(livros);
-	}
+    public Autor(String nome) {
+        this();
+        this.nome = nome;
+    }
 
 	public List<Livro> getLivros() {
-		return livros;
-	}
-
-	public void setLivros(List<Livro> livros) {
-		this.livros = livros;
+		return Collections.unmodifiableList(livros);
 	}
 
 	public String getNome() {
 		return nome;
-	}
-
-	public void setNome(String nome) {
-		this.nome = nome;
 	}
 
 	public Long getId() {
@@ -85,4 +76,8 @@ public class Autor {
 	public int hashCode() {
 		return Objects.hashCode(this.nome);
 	}
+
+    public void addLivro(Livro livro) {
+        this.livros.add(livro);
+    }
 }

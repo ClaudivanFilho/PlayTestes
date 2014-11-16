@@ -5,7 +5,7 @@ import java.util.List;
 import models.Autor;
 import models.Livro;
 import models.dao.GenericDAO;
-import models.dao.GenericDAOImpl;
+import play.Logger;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
@@ -15,37 +15,46 @@ import play.mvc.Result;
  * Controlador Principal do Sistema
  */
 public class Application extends Controller {
-	static Form<Livro> bookForm = Form.form(Livro.class);
-	private static GenericDAO dao = new GenericDAOImpl();
+	private static Form<Livro> bookForm = Form.form(Livro.class);
+	private static final GenericDAO dao = new GenericDAO();
 
 	public static Result index() {
 		return redirect(routes.Application.books());
 	}
 
-	// Notação transactional sempre que o método fizer transação com o Banco de
-	// Dados.
+	/*
+	 * A Anotação transactional é necessária em todas as Actions que
+	 * usarem o BD.
+	 */
 	@Transactional
 	public static Result books() {
 		// Todos os Livros do Banco de Dados
-		List<Livro> result = getDao().findAllByClassName("Livro");
-		return ok(views.html.index.render(result, bookForm));
+		List<Livro> result = dao.findAllByClass(Livro.class);
+		return ok(views.html.index.render(result));
 	}
 
-	// Notação transactional sempre que o método fizer transação com o Banco de
-	// Dados.
 	@Transactional
 	public static Result newBook() {
-		// Todos os Livros do Banco de Dados
-		List<Livro> result = getDao().findAllByClassName("Livro");
 		// O formulário dos Livros Preenchidos
 		Form<Livro> filledForm = bookForm.bindFromRequest();
+
 		if (filledForm.hasErrors()) {
-			return badRequest(views.html.index.render(result, filledForm));
+            List<Livro> result = dao.findAllByClass(Livro.class);
+            //TODO falta colocar na interface mensagem de erro.
+			return badRequest(views.html.index.render(result));
 		} else {
+            Livro novoLivro = filledForm.get();
+            Logger.debug("Criando livro: " + filledForm.data().toString() + " como " + novoLivro.getNome());
 			// Persiste o Livro criado
-			getDao().persist(filledForm.get());
+			dao.persist(novoLivro);
 			// Espelha no Banco de Dados
-			getDao().flush();
+			dao.flush();
+            /*
+             * Usar routes.Application.<uma action> é uma forma de
+             * evitar colocar rotas literais (ex: "/books")
+             * hard-coded no código. Dessa forma, se mudamos no
+             * arquivo routes, continua funcionando.
+             */
 			return redirect(routes.Application.books());
 		}
 	}
@@ -53,25 +62,28 @@ public class Application extends Controller {
 	@Transactional
 	public static Result addAutor(Long id, String nome) {
 		criaAutorDoLivro(id, nome);
-		List<Livro> result = getDao().findAllByClassName("Livro");
-		return ok(views.html.index.render(result, bookForm));
+        return redirect(routes.Application.books());
 	}
 
 	private static void criaAutorDoLivro(Long id, String nome) {
 		// Cria um novo Autor para um livro de {@code id}
-		Autor novoAutor = new Autor();
-		novoAutor.setNome(nome);
+		Autor novoAutor = new Autor(nome);
 		// Procura um objeto da classe Livro com o {@code id}
-		Livro livroDaListagem = getDao().findByEntityId(Livro.class, id);
+		Livro livroDaListagem = dao.findByEntityId(Livro.class, id);
 		// Faz o direcionamento de cada um
-		livroDaListagem.getAutores().add(novoAutor);
-		novoAutor.getLivros().add(livroDaListagem);
+		livroDaListagem.addAutor(novoAutor);
+		novoAutor.addLivro(livroDaListagem);
 		// Persiste o Novo Autor
-		getDao().persist(novoAutor);
-		// Atualiza as informações do livro
-		getDao().merge(livroDaListagem);
+		dao.persist(novoAutor);
+
+		/* As informações do livro já serão automaticamente atualizadas
+		 * no BD no final da transação. Isso porque o livro já existe
+		 * no BD, e então já é gerenciado por ele.
+		 *
+		 * Assim fica opcional fazer dao.merge(livroDaListagem);
+		 */
 		// Espelha no Banco de Dados
-		getDao().flush();
+		dao.flush();
 	}
 
 	// Notação transactional sempre que o método fizer transação com o Banco de
@@ -79,17 +91,10 @@ public class Application extends Controller {
 	@Transactional
 	public static Result deleteBook(Long id) {
 		// Remove o Livro pelo Id
-		getDao().removeById(Livro.class, id);
+		dao.removeById(Livro.class, id);
 		// Espelha no banco de dados
-		getDao().flush();
+		dao.flush();
 		return redirect(routes.Application.books());
 	}
 
-	public static GenericDAO getDao() {
-		return dao;
-	}
-
-	public static void setDao(GenericDAO dao) {
-		Application.dao = dao;
-	}
 }
