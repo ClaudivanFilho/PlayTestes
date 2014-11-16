@@ -22,13 +22,12 @@ import com.google.common.base.Objects;
 public class Livro {
 
 	// Todo Id tem que ter o GeneratedValue a não ser que ele seja setado
-	@Id
-	@SequenceGenerator(name = "LIVRO_SEQUENCE", sequenceName = "LIVRO_SEQUENCE", allocationSize = 1, initialValue = 0)
-	@GeneratedValue(strategy = GenerationType.TABLE)
 	// Usar Id sempre Long
+	@Id
+	@GeneratedValue
 	private Long id;
 
-    @ManyToMany(mappedBy = "livros", cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
 	private List<Autor> autores;
 
 	@Column
