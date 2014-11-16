@@ -1,13 +1,15 @@
-#Play - Testes
+#Play - Usando Hibernate e Testes automáticos em vários níveis
 
-######Playframework version 2.2.3 
+######Playframework version 2.3.x 
 ---
 [ ![Codeship Status for ClaudivanFilho/PlayTestes](https://www.codeship.io/projects/62221cd0-f8c3-0131-6ba1-42ecadc609ef/status)](https://www.codeship.io/projects/28753)
 
->Sua aplicação Play pode ser testada em três níveis básicos:
+(Esse exemplo foi na grande maior parte feito por Marcos Vinícius Candeia e Claudivan Filho)
+
+>Sua aplicação Play pode ser testada em três níveis:
 
   - UNIDADE
-  - FUNCIONAL
+  - FUNCIONAL/INTEGRAÇÃO
   - INTERFACE / BROWSER
   
 >Utilização
@@ -16,15 +18,15 @@
 
 * na raiz da sua aplicação play digite o comando
 ```sh
-$>play test
+$>activator test
 //ou então para executar determinado teste.
-$>play "test-only <sua classe de testes ou seu namespace>"
+$>activator "test-only <sua classe de testes ou seu namespace>"
 ```
 ```sh
 // rodar a classe de testes IndexViewTest do pacote funcional
-$>play "test-only funcional.IndexViewTest"
+$>activator "test-only funcional.IndexViewTest"
 // rodar todas as classes de teste do pacote funcional 
-$>play "test-only funcional.*"
+$>activator "test-only funcional.*"
 ``` 
 
 ## Testes de Unidade
@@ -32,7 +34,7 @@ $>play "test-only funcional.*"
 > A Maneira padrão de testar sua apicação, com a ajuda do [JUnit]
 
 > Dicas
-* Conter um 'extends AbstractTest' para testar com banco de dados
+* Caso sua apliação use BD, é necessário iniciar o BD. Usando o código deste projeto, basta usar 'extends AbstractTest' nas classes de teste que precisam do BD.
 * [AbstractTest.java]
 
 Exemplo:
@@ -60,7 +62,7 @@ public class UnidadeTest extends AbstractTest{
 -[exemplo completo][4]
 ##Testes Funcionais
 
-> Testa o comportamento externo do software
+> Testa o comportamento do sistema quando executando inteiro. Exercita configurações e integrações com outros sistemas. 
 
 > Dicas
 * Conter um 'extends AbstractTest' para testar com BD e outras transações
@@ -128,4 +130,4 @@ Utilizem o Piazza!
 [3]:https://github.com/ClaudivanFilho/PlayTestes/blob/master/test/funcional/IndexRouteTest.java
 [4]:https://github.com/ClaudivanFilho/PlayTestes/blob/master/test/unidade/LivroTest.java
 [JUnit]:http://www.junit.org/
-[TestesFuncionais]:http://www.playframework.com/documentation/2.2.x/JavaFunctionalTest
+[TestesFuncionais]:http://www.playframework.com/documentation/2.3.x/JavaFunctionalTest

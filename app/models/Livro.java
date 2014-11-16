@@ -2,6 +2,7 @@ package models;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -21,13 +22,12 @@ import com.google.common.base.Objects;
 public class Livro {
 
 	// Todo Id tem que ter o GeneratedValue a não ser que ele seja setado
-	@Id
-	@SequenceGenerator(name = "LIVRO_SEQUENCE", sequenceName = "LIVRO_SEQUENCE", allocationSize = 1, initialValue = 0)
-	@GeneratedValue(strategy = GenerationType.TABLE)
 	// Usar Id sempre Long
+	@Id
+	@GeneratedValue
 	private Long id;
 
-	@ManyToMany(mappedBy = "livros", cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
 	private List<Autor> autores;
 
 	@Column
@@ -38,33 +38,26 @@ public class Livro {
 		this.autores = new ArrayList<Autor>();
 	}
 
-	public Livro(Autor... autores) {
-		this.setAutores(Arrays.asList(autores));
+    public Livro(String nome) {
+        this();
+        this.nome = nome;
+    }
 
-	}
+    public Livro(String nome, Autor... autores) {
+        this.autores = Arrays.asList(autores);
+        this.nome = nome;
+    }
 
-	public String getNome() {
+    public String getNome() {
 		return nome;
 	}
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
 
-	public List<Autor> getAutores() {
-		return autores;
-	}
-
-	public void setAutores(List<Autor> autores) {
-		this.autores = autores;
-	}
-
-	public Long getId() {
+    public Long getId() {
 		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 	@Override
@@ -80,4 +73,16 @@ public class Livro {
 	public int hashCode() {
 		return Objects.hashCode(this.getNome());
 	}
+
+    public List<Autor> getAutores() {
+        return Collections.unmodifiableList(autores);
+    }
+
+    public void addAutor(Autor autor) {
+        autores.add(autor);
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 }

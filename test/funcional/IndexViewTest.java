@@ -18,16 +18,14 @@ import views.html.index;
 
 public class IndexViewTest {
 
-	static Form<Livro> bookForm = Form.form(Livro.class);
 	List<Livro> livros;
 	Livro livro1;
 
 	@Before
 	public void iniciaVariaveis() {
 		livros = new ArrayList<Livro>();
-		livro1 = new Livro();
-		livro1.setNome("Calculo I");
-		livro1.setId(1L);
+		livro1 = new Livro("Calculo I");
+        livro1.setId(1L);
 	}
 
 	// Testa o template index.scala.html
@@ -37,7 +35,7 @@ public class IndexViewTest {
 
 		// guarda o html resultante da renderização do index.scala.html
 		// com a lista de livros e o formulario
-		Content html = index.render(livros, bookForm);
+		Content html = index.render(livros);
 		assertThat(contentType(html)).isEqualTo("text/html");
 		// verifica se o html contém a determimnada string, no caso o nome do
 		// livro
