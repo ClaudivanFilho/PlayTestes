@@ -1,4 +1,4 @@
-#Play - Testes
+#Play - Usando Hibernate e Testes automáticos em vários níveis
 
 ######Playframework version 2.2.3 
 ---
